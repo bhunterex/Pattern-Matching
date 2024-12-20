@@ -24,5 +24,5 @@ options:
 ## Usage
 
 ```
-python3 ./pm.py -u All_Urls.txt -p secrets.txt
+python3 ./pm.py -u All_Urls.txt -p secrets.txt -o secret-output.txt
 ```
