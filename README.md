@@ -24,5 +24,5 @@ options:
 ## Usage
 
 ```
-python3 ./pm.py -u ~/bug_bounty_report/amagi.com/subDomain/recon/urls/5_All_Urls.txt -p secrets.txt
+python3 ./pm.py -u All_Urls.txt -p secrets.txt
 ```
