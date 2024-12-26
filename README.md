@@ -6,7 +6,7 @@
 
 ```
 python3 pm -h
-usage: pm.py [-h] -u URL_FILE -p PATTERN [-o OUTPUT] [-a]
+usage: pm [-h] -u URL_FILE -p PATTERN [-o OUTPUT] [-a]
 
 Match patterns from a file in URLs and print/save truncated results.
 
