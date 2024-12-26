@@ -5,7 +5,7 @@
 ## Options
 
 ```
-python3 pm -h
+pm -h
 usage: pm [-h] -u URL_FILE -p PATTERN [-o OUTPUT] [-a]
 
 Match patterns from a file in URLs and print/save truncated results.
@@ -24,7 +24,7 @@ options:
 ## Usage
 
 ```
-python3 ./pm.py -u All_Urls.txt -p secrets.txt -o secret-output.txt
+pm -u All_Urls.txt -p secrets.txt -o secret-output.txt
 ```
 
 ## installation
