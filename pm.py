@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import re
 import argparse
+import sys
 
 def load_patterns(pattern_file):
     try:
@@ -11,20 +12,14 @@ def load_patterns(pattern_file):
         print(f"Error: File {pattern_file} not found.")
         return []
 
-def process_urls(url_file, patterns, output_file=None, after_match=False):
-    try:
-        with open(url_file, 'r') as file:
-            urls = file.readlines()
-    except FileNotFoundError:
-        print(f"Error: File {url_file} not found.")
-        return
-
+def process_urls(urls, patterns, output_file=None, after_match=False):
     results = []
 
     for url in urls:
         url = url.strip()
         for pattern in patterns:
-            regex = re.compile(f"({pattern}[^&]*)")
+            # Escape pattern to handle special characters
+            regex = re.compile(f"({re.escape(pattern)}[^&]*)")
             match = regex.search(url)
             if match:
                 if after_match:
@@ -52,8 +47,15 @@ def process_urls(url_file, patterns, output_file=None, after_match=False):
             print(f"Error: Could not write to {output_file}")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Match patterns from a file in URLs and print/save truncated results.")
-    parser.add_argument("-u", "--url-file", required=True, help="File containing URLs")
+    parser = argparse.ArgumentParser(
+        description="Match patterns from a file in URLs and print/save truncated results.",
+        epilog="Examples:\n"
+               "  pm -u urls.txt -p xss.txt\n"
+               "  pm -u urls.txt -p sqli.txt -o results.txt\n"
+               "  pm -u urls.txt -p rce.txt -a",
+        formatter_class=argparse.RawTextHelpFormatter
+    )
+    parser.add_argument("-u", "--url-file", help="File containing URLs (optional, stdin is used if not provided)")
     parser.add_argument("-p", "--pattern", required=True, help="Pattern file to use (e.g., xss.txt)")
     parser.add_argument("-o", "--output", help="File to save output results (optional)")
     parser.add_argument("-a", "--after", action="store_true", help="Include pattern values in the output")
@@ -66,4 +68,18 @@ if __name__ == "__main__":
         print(f"Error: No patterns loaded from the file {args.pattern}.")
         exit(1)
 
-    process_urls(args.url_file, patterns, args.output, args.after)
+    # Load URLs from file or stdin
+    if args.url_file:
+        try:
+            with open(args.url_file, 'r') as file:
+                urls = file.readlines()
+        except FileNotFoundError:
+            print(f"Error: File {args.url_file} not found.")
+            exit(1)
+    else:
+        if sys.stdin.isatty():
+            print("Error: No input URLs provided via stdin or -u.")
+            exit(1)
+        urls = sys.stdin.readlines()
+
+    process_urls(urls, patterns, args.output, args.after)
