@@ -50,9 +50,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Match patterns from a file in URLs and print/save truncated results.",
         epilog="Examples:\n"
-               "  pm -u urls.txt -p xss.txt\n"
-               "  pm -u urls.txt -p sqli.txt -o results.txt\n"
-               "  pm -u urls.txt -p rce.txt -a",
+               "  pm -u urls.txt -p patterns.txt\n"
+               "  pm -u urls.txt -p patterns.txt -o results.txt\n"
+               "  pm -u urls.txt -p patterns.txt -a",
         formatter_class=argparse.RawTextHelpFormatter
     )
     parser.add_argument("-u", "--url-file", help="File containing URLs (optional, stdin is used if not provided)")
@@ -71,7 +71,10 @@ if __name__ == "__main__":
     # Load URLs from file or stdin
     if args.url_file:
         try:
-            with open(args.url_file, 'r') as file:
+            with open(args.url_file, 'r', encoding='utf-8') as file:
+                urls = file.readlines()
+        except UnicodeDecodeError:
+            with open(args.url_file, 'r', encoding='iso-8859-1') as file:
                 urls = file.readlines()
         except FileNotFoundError:
             print(f"Error: File {args.url_file} not found.")
@@ -80,6 +83,16 @@ if __name__ == "__main__":
         if sys.stdin.isatty():
             print("Error: No input URLs provided via stdin or -u.")
             exit(1)
-        urls = sys.stdin.readlines()
+        try:
+            # Read stdin as bytes first
+            raw_input = sys.stdin.buffer.read()
+            try:
+                urls = raw_input.decode('utf-8').splitlines()
+            except UnicodeDecodeError:
+                # Fallback to iso-8859-1 if UTF-8 fails
+                urls = raw_input.decode('iso-8859-1').splitlines()
+        except Exception as e:
+            print(f"Error reading stdin: {e}")
+            exit(1)
 
     process_urls(urls, patterns, args.output, args.after)
