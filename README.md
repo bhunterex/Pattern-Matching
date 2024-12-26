@@ -5,7 +5,7 @@
 ## Options
 
 ```
-pm -h                                                                                                                       ─╯
+pm -h
 usage: pm [-h] [-u URL_FILE] -p PATTERN [-o OUTPUT] [-a]
 
 Match patterns from a file in URLs and print/save truncated results.
