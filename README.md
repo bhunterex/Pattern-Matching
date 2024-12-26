@@ -26,3 +26,14 @@ options:
 ```
 python3 ./pm.py -u All_Urls.txt -p secrets.txt -o secret-output.txt
 ```
+
+## installation
+
+```
+cd /opt/
+sudo git clone https://github.com/bhunterex/Pattern-Matching.git
+cd
+sudo chmod +x /opt/Pattern-Matching/pm.py
+sudo ln -sf /opt/Pattern-Matching/pm.py /usr/local/bin/pm
+pm -h
+```
