@@ -32,6 +32,11 @@ Examples:
 pm -u All_Urls.txt -p secrets.txt -o secret-output.txt
 ```
 
+## Piping
+```
+cat urls.txt | pm -p tools/Pattern-Matching/patterns/sqli.txt
+```
+
 ## installation
 
 ```
