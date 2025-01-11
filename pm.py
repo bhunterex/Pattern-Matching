@@ -3,6 +3,8 @@ import re
 import argparse
 import sys
 
+__version__ = "1.0.0"  # Version of the script
+
 def load_patterns(pattern_file):
     try:
         with open(pattern_file, 'r') as file:
@@ -12,30 +14,30 @@ def load_patterns(pattern_file):
         print(f"Error: File {pattern_file} not found.")
         return []
 
-def process_urls(urls, patterns, output_file=None, after_match=False):
+def process_urls(urls, patterns, output_file=None, append_text="FUZZ"):
     results = []
 
     for url in urls:
         url = url.strip()
+        matches = []
         for pattern in patterns:
             # Escape pattern to handle special characters
             regex = re.compile(f"({re.escape(pattern)}[^&]*)")
-            match = regex.search(url)
-            if match:
-                if after_match:
-                    # After the value, check for space or '&' and truncate accordingly
-                    end_pos = match.end()
-                    if len(url) > end_pos and (url[end_pos] == ' ' or url[end_pos] == '&'):
-                        # Truncate everything after space or '&'
-                        result = url[:end_pos]
-                    else:
-                        result = url[:match.end()]
-                else:
-                    # Include pattern but exclude value
-                    result = url[:match.start() + len(match.group(1).split("=")[0]) + 1]
-                print(result)  # Print each matched result
-                results.append(result)  # Add to the results list
-                break  # Stop checking after the first match in this URL
+            matches.extend(regex.finditer(url))
+        
+        if matches:
+            # Sort matches by their start index to ensure we append in the correct order
+            matches.sort(key=lambda x: x.start())
+            result = url
+            offset = 0  # Keep track of how much we've added to the string
+            for match in matches:
+                # Adjust position based on previous insertions
+                insert_pos = match.end() + offset
+                result = result[:insert_pos] + append_text + result[insert_pos:]
+                offset += len(append_text)
+            
+            print(result)  # Print the modified URL
+            results.append(result)  # Add to the results list
 
     # Write results to the output file if specified
     if output_file:
@@ -48,19 +50,23 @@ def process_urls(urls, patterns, output_file=None, after_match=False):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
-        description="Match patterns from a file in URLs and print/save truncated results.",
+        description="Match patterns from a file in URLs, append text at each match, and print/save modified results.",
         epilog="Examples:\n"
                "  pm -u urls.txt -p patterns.txt\n"
                "  pm -u urls.txt -p patterns.txt -o results.txt\n"
-               "  pm -u urls.txt -p patterns.txt -a",
+               "  pm -u urls.txt -p patterns.txt -r CUSTOM_TEXT",
         formatter_class=argparse.RawTextHelpFormatter
     )
     parser.add_argument("-u", "--url-file", help="File containing URLs (optional, stdin is used if not provided)")
     parser.add_argument("-p", "--pattern", required=True, help="Pattern file to use (e.g., xss.txt)")
     parser.add_argument("-o", "--output", help="File to save output results (optional)")
-    parser.add_argument("-a", "--after", action="store_true", help="Include pattern values in the output")
+    parser.add_argument("-r", "--replace", help="Text to append after each matched pattern (default: FUZZ)", default="FUZZ")
+    parser.add_argument("-v", "--version", action="version", version=f"%(prog)s {__version__}")
 
     args = parser.parse_args()
+
+    if args.version:
+        sys.exit(0)  # Exit if only version is requested
 
     # Load patterns from the file provided in -p
     patterns = load_patterns(args.pattern)
@@ -95,4 +101,4 @@ if __name__ == "__main__":
             print(f"Error reading stdin: {e}")
             exit(1)
 
-    process_urls(urls, patterns, args.output, args.after)
+    process_urls(urls, patterns, args.output, args.replace)
