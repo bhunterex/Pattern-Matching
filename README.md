@@ -35,7 +35,7 @@ pm -u params.txt -p /opt/Pattern-Matching/patterns/xss.txt -r "XSS" -o xss_param
 
 ## Piping
 ```
-cat urls.txt | pm -p tools/Pattern-Matching/patterns/sqli.txt -r "SQLI"
+cat urls.txt | pm -p /opt/Pattern-Matching/patterns/sqli.txt -r "SQLI"
 ```
 
 ## installation
