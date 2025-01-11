@@ -65,9 +65,6 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    if args.version:
-        sys.exit(0)  # Exit if only version is requested
-
     # Load patterns from the file provided in -p
     patterns = load_patterns(args.pattern)
     if not patterns:
