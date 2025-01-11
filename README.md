@@ -32,13 +32,10 @@ Examples:
 ```
 pm -u params.txt -p /opt/Pattern-Matching/patterns/xss.txt -r "XSS" -o xss_params_output.txt
 ```
-```
-pm -u All_Urls.txt -p secrets.txt -o secret-output.txt
-```
 
 ## Piping
 ```
-cat urls.txt | pm -p tools/Pattern-Matching/patterns/sqli.txt
+cat urls.txt | pm -p tools/Pattern-Matching/patterns/sqli.txt -r "SQLI"
 ```
 
 ## installation
