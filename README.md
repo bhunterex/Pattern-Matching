@@ -6,9 +6,9 @@
 
 ```
 pm -h
-usage: pm [-h] [-u URL_FILE] -p PATTERN [-o OUTPUT] [-a]
+usage: pm [-h] [-u URL_FILE] -p PATTERN [-o OUTPUT] [-r REPLACE] [-v]
 
-Match patterns from a file in URLs and print/save truncated results.
+Match patterns from a file in URLs, append text at each match, and print/save modified results.
 
 options:
   -h, --help            show this help message and exit
@@ -18,12 +18,14 @@ options:
                         Pattern file to use (e.g., xss.txt)
   -o OUTPUT, --output OUTPUT
                         File to save output results (optional)
-  -a, --after           Include pattern values in the output
+  -r REPLACE, --replace REPLACE
+                        Text to append after each matched pattern (default: FUZZ)
+  -v, --version         show program's version number and exit
 
 Examples:
-  pm -u urls.txt -p xss.txt
-  pm -u urls.txt -p sqli.txt -o results.txt
-  pm -u urls.txt -p rce.txt -a
+  pm -u urls.txt -p patterns.txt
+  pm -u urls.txt -p patterns.txt -o results.txt
+  pm -u urls.txt -p patterns.txt -r CUSTOM_TEXT
 ```
 
 ## Usage
