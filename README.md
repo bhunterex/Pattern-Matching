@@ -42,7 +42,7 @@ Examples:
 
 ## Usage
 ```
-pm -u params.txt -p /opt/Pattern-Matching/patterns/xss.txt -r "XSS" -o xss_params_output.txt
+pm -f params.txt -p /opt/Pattern-Matching/patterns/xss.txt -r "XSS" -o xss_params_output.txt
 ```
 
 ## Piping
